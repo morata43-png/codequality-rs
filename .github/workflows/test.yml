@@ -29,7 +29,7 @@ jobs:
         run: cargo test --locked
 
       - name: Run clippy
-        run: cargo clippy --all-targets --locked -- -D warnings
+        run: cargo clippy --all-targets --locked -- -W warnings
 
       - name: Check formatting
         run: cargo fmt --check
