@@ -104,11 +104,7 @@ fn walk_tree(node: Node, source: &str, file_path: &Path, findings: &mut Vec<Find
     }
 }
 
-fn check_function(
-    node: &Node,
-    source: &str,
-    file_path: &Path,
-) -> Vec<Finding> {
+fn check_function(node: &Node, source: &str, file_path: &Path) -> Vec<Finding> {
     let mut findings = Vec::new();
     let name = get_function_name(node, source);
     let line = node.start_position().row + 1;
@@ -127,10 +123,7 @@ fn check_function(
             file: file_path.display().to_string(),
             line: line as u32,
             column,
-            message: format!(
-                "Function '{}' is {} lines long (>50)",
-                name, func_length
-            ),
+            message: format!("Function '{}' is {} lines long (>50)", name, func_length),
             suggestion: Some("Consider breaking it into smaller functions".to_string()),
         });
     }
@@ -145,11 +138,10 @@ fn check_function(
             file: file_path.display().to_string(),
             line: line as u32,
             column,
-            message: format!(
-                "Function '{}' has {} parameters (>5)",
-                name, params_count
+            message: format!("Function '{}' has {} parameters (>5)", name, params_count),
+            suggestion: Some(
+                "Consider grouping related params into a dataclass or dict".to_string(),
             ),
-            suggestion: Some("Consider grouping related params into a dataclass or dict".to_string()),
         });
     }
 
@@ -202,7 +194,10 @@ fn check_function(
 }
 
 fn is_function(node: &Node) -> bool {
-    matches!(node.kind(), "function_definition" | "async_function_definition")
+    matches!(
+        node.kind(),
+        "function_definition" | "async_function_definition"
+    )
 }
 
 fn get_function_name(node: &Node, source: &str) -> String {
@@ -221,7 +216,11 @@ fn count_parameters(node: &Node) -> u32 {
     for child in params.children(&mut cursor) {
         if matches!(
             child.kind(),
-            "identifier" | "typed_parameter" | "default_parameter" | "list_splat_pattern" | "dictionary_splat_pattern"
+            "identifier"
+                | "typed_parameter"
+                | "default_parameter"
+                | "list_splat_pattern"
+                | "dictionary_splat_pattern"
         ) {
             count += 1;
         }
@@ -268,7 +267,11 @@ fn calculate_max_depth(node: &Node, current_depth: u32) -> u32 {
             | "with_statement"
             | "match_statement"
     );
-    let new_depth = if is_control_flow { current_depth + 1 } else { current_depth };
+    let new_depth = if is_control_flow {
+        current_depth + 1
+    } else {
+        current_depth
+    };
     if new_depth > max_depth {
         max_depth = new_depth;
     }

@@ -42,11 +42,7 @@ fn test_analyze_too_many_params() {
 fn test_analyze_simple_file() {
     let dir = tempfile::tempdir().unwrap();
     let file = dir.path().join("clean.py");
-    std::fs::write(
-        &file,
-        "def clean(x, y):\n    return x + y\n",
-    )
-    .unwrap();
+    std::fs::write(&file, "def clean(x, y):\n    return x + y\n").unwrap();
 
     let findings = codequality_rs::analyzer::analyze_file(&file).unwrap();
     assert!(findings.is_empty());
@@ -129,5 +125,9 @@ def hello(name: str) -> str:
     .unwrap();
 
     let findings = codequality_rs::analyzer::analyze_file(&file).unwrap();
-    assert!(findings.is_empty(), "Expected no findings, got: {:?}", findings);
+    assert!(
+        findings.is_empty(),
+        "Expected no findings, got: {:?}",
+        findings
+    );
 }

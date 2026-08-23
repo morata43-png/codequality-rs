@@ -72,18 +72,16 @@ fn main() -> Result<()> {
 
     let elapsed = start.elapsed();
     let output = match cli.format {
-        Format::Markdown => reporters::render_markdown(&all_findings, &cli.path.display().to_string()),
+        Format::Markdown => {
+            reporters::render_markdown(&all_findings, &cli.path.display().to_string())
+        }
         Format::Json => reporters::render_json(&all_findings)?,
         Format::Sarif => reporters::render_sarif(&all_findings, &cli.path.display().to_string())?,
     };
 
     print!("{}", output);
 
-    eprintln!(
-        "\n✓ {} issue(s) found in {:?}",
-        all_findings.len(),
-        elapsed
-    );
+    eprintln!("\n✓ {} issue(s) found in {:?}", all_findings.len(), elapsed);
 
     Ok(())
 }

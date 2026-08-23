@@ -91,14 +91,16 @@ pub fn render_markdown(findings: &[Finding], file: &str) -> String {
 
     let mut by_severity: BTreeMap<&str, Vec<&Finding>> = BTreeMap::new();
     for f in findings {
-        by_severity
-            .entry(f.severity.as_str())
-            .or_default()
-            .push(f);
+        by_severity.entry(f.severity.as_str()).or_default().push(f);
     }
 
     for (sev, items) in by_severity.iter().rev() {
-        out.push_str(&format!("## {} ({} issue{})\n\n", capitalize(sev), items.len(), if items.len() == 1 { "" } else { "s" }));
+        out.push_str(&format!(
+            "## {} ({} issue{})\n\n",
+            capitalize(sev),
+            items.len(),
+            if items.len() == 1 { "" } else { "s" }
+        ));
         for f in items {
             let icon = match f.severity {
                 Severity::Error => "🔴",
@@ -107,7 +109,11 @@ pub fn render_markdown(findings: &[Finding], file: &str) -> String {
             };
             out.push_str(&format!(
                 "- {} **L{}** `{}` ({}): {}\n",
-                icon, f.line, f.rule_id, f.severity.as_str(), f.message
+                icon,
+                f.line,
+                f.rule_id,
+                f.severity.as_str(),
+                f.message
             ));
             if let Some(s) = &f.suggestion {
                 out.push_str(&format!("  - 💡 {}\n", s));
